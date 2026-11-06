@@ -1,0 +1,8 @@
+Origin: unixwin
+Label: niubash
+Suite: stable
+Codename: stable
+Architectures: amd64 arm64
+Components: main
+Description: niubash — AI-native bash-compatible shell
+SignWith: yes

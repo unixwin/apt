@@ -1,0 +1,17 @@
+Package: niubash
+Version: 1.5.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libc6 (>= 2.35)
+Maintainer: unixwin team <arookieofc@gmail.com>
+Homepage: https://github.com/unixwin/niubash
+Description: AI-native bash-compatible shell (niu)
+ Niubash is a native shell that runs Bash-compatible commands without
+ WSL or a virtual machine. It embeds the rubash language engine (GNU
+ bash 5.3 as its oracle) and the ruline line editor (GNU readline
+ 8.x compatible).
+ .
+ On Linux, external commands come from the system's own coreutils;
+ this package installs /usr/bin/niu only and does not touch
+ /usr/bin/bash.

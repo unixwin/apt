@@ -1,0 +1,46 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: unixwin
+Label: niubash
+Suite: stable
+Codename: stable
+Date: Fri, 06 Nov 2026 05:40:26 UTC
+Architectures: amd64 arm64
+Components: main
+Description: niubash — AI-native bash-compatible shell
+MD5Sum:
+ 447e45e75fa178602b51a532a7e53637 854 main/binary-amd64/Packages
+ 27a4d1918cdcaf9340712cd2771edcb8 575 main/binary-amd64/Packages.gz
+ c7df4a21d482a2fdcc7db0a754134355 140 main/binary-amd64/Release
+ f83226ec99dcade91ad25fd8b656f8de 854 main/binary-arm64/Packages
+ 1a6f4852c4d1dc8c03028335ff357282 572 main/binary-arm64/Packages.gz
+ cc3c5dead3213c7c61561146748e4424 140 main/binary-arm64/Release
+SHA1:
+ 13c4c2a7479114a93486602257e16b941d014372 854 main/binary-amd64/Packages
+ 6476aa959cc4ed416b6d3942c8615ef71692fa62 575 main/binary-amd64/Packages.gz
+ 031a44ea88206687198f2105b5b39612ac95d747 140 main/binary-amd64/Release
+ d8fdd69eb61f6ea53cc53f4eaba5b447a9fcc239 854 main/binary-arm64/Packages
+ bdc9a7e1f286e74cdaf65871e4a0b4fdb8205534 572 main/binary-arm64/Packages.gz
+ 6065324de9110bfd1fdcc406542b08c58c91de7f 140 main/binary-arm64/Release
+SHA256:
+ 9b9c658af676fcc493d7d95bdf2bb9a0c62dfbfebc99717ec0f2f6724e3b1b2d 854 main/binary-amd64/Packages
+ ae0eee7ec69891a303f75a67413777f8c80b4fac24e80a283e7a3c34d69413d8 575 main/binary-amd64/Packages.gz
+ edb0ca446045693cac7a14fa0b64863583d1b5803972532fecd5a870ff327105 140 main/binary-amd64/Release
+ 67752d4495db7b7eefdf2327e2ded88d6727d5b0ed2be38b84d218e265ec7ab5 854 main/binary-arm64/Packages
+ f3dc6bac424eb238bc4c64eb671d01c8e67511606f661518d9403cfae704e92b 572 main/binary-arm64/Packages.gz
+ 92684dfd75baef62d3282eaf1236de93a3be4829999051bcc0d4af1667a0aafe 140 main/binary-arm64/Release
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAEBCgAdFiEExFfgWgo5Lyd87y84NauCB0EtUxUFAmrtaEoACgkQNauCB0Et
+UxXixgv+JV8WrvEErv8UetAQQaagQl5YnZWYIAjthnTs7RHEdq97Mf6MJd+Yq4vu
+IGLGqD8GZLMbkKMlRLhGj5VEO+nXu5K7bx7NGhP7sE/ZiVRDCf6+Ts/fy506xE8F
+d1Yiur2yOc0f2+U6xe+pcC8TCeWQt/Cet4BOPyHvl2+GyZ+Wn33VSWm13I09TznR
+Wbo1JSKG3KQBjVdtIAzWgOH9qPME8IpxYjBuxxVMkBpqKk9wXw9SzyrlSB14I9UF
+jcuKWHHktnZSjzqy3qOKqQUUqmCsZ7Abb1l4JbwLxLucgw2kNHOUKTl8pFurU1KO
+xn+C8UVVnKS/e1q1MAju5jpZg08lYh+O3KSqk0gSjQpkFEDm7zI+5tKv0lY85aRG
+NlH8l7cLDSuuVmlpj2nK6GGXQPLgE8+BdWuwgaoSyXI99AomXPLMPE6g6UkQYsbm
+iZoSmLi7vmCg0gP4JZecRFWUCAh07paEL3hpvg4bqcNFLLqtZyL/9EUaCiuN3tmN
+k5dreuDR
+=oVmA
+-----END PGP SIGNATURE-----

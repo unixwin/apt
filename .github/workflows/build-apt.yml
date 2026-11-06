@@ -1,0 +1,218 @@
+# niubash APT archive builder.
+#
+# Lives in unixwin/apt so the archive push is a same-repo GITHUB_TOKEN
+# push (org policy disables deploy keys, and cross-repo GITHUB_TOKEN
+# pushes are impossible by design). The niubash release line stays
+# untouched: this workflow consumes the PUBLIC release tarballs, which
+# already carry the gnu/glibc niu binary (the released shape, glibc
+# floor 2.35: Ubuntu 22.04+, Debian 12+ — docs/release.md).
+#
+# Runs on a schedule to pick up new releases automatically (≤6h lag)
+# and on demand via workflow_dispatch (inputs.tag to pin one).
+# Idempotent: exits early when the pool already holds the version.
+
+name: build-apt
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "niubash release tag to package (default: latest)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apt-archive
+  cancel-in-progress: false
+
+jobs:
+  apt:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Resolve target release
+        id: resolve
+        run: |
+          set -euo pipefail
+          tag="${{ inputs.tag }}"
+          if [ -z "$tag" ]; then
+            tag="$(curl -fsSL https://api.github.com/repos/unixwin/niubash/releases/latest | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"])')"
+          fi
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release tag '$tag'" >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Skip when the pool already holds this version
+        run: |
+          set -euo pipefail
+          version="${{ steps.resolve.outputs.version }}"
+          if [ -f "pool/main/n/niubash/niubash_${version}_amd64.deb" ] && [ -f "pool/main/n/niubash/niubash_${version}_arm64.deb" ]; then
+            echo "pool already carries niubash $version; nothing to do"
+            exit 0
+          fi
+
+      - name: Install reprepro
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends reprepro
+
+      - name: Import GPG signing key
+        env:
+          APT_GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$APT_GPG_PRIVATE_KEY" | gpg --batch --import
+          keyid="$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/{print $5; exit}')"
+          echo "signing key: $keyid"
+          echo "GPG_KEYID=$keyid" >> "$GITHUB_ENV"
+
+      - name: Download public release tarballs
+        env:
+          tag: ${{ steps.resolve.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p tarballs
+          curl -fsSL -o tarballs/linux-x86_64.tar.gz \
+            "https://github.com/unixwin/niubash/releases/download/${tag}/niubash-${tag}-linux-x86_64.tar.gz"
+          curl -fsSL -o tarballs/linux-aarch64.tar.gz \
+            "https://github.com/unixwin/niubash/releases/download/${tag}/niubash-${tag}-linux-aarch64.tar.gz"
+
+      - name: Package .debs from the release payloads
+        env:
+          version: ${{ steps.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p pool/main/n/niubash meta
+          cat > meta/copyright <<'EOF'
+          Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+          Upstream-Name: niubash
+          Source: https://github.com/unixwin/niubash
+
+          Files: *
+          Copyright: 2026 unixwin team
+          License: MIT
+
+          Permission is hereby granted, free of charge, to any person
+          obtaining a copy of this software and associated documentation
+          files (the "Software"), to deal in the Software without
+          restriction, including without limitation the rights to use, copy,
+          modify, merge, publish, distribute, sublicense, and/or sell copies
+          of the Software, and to permit persons to whom the Software is
+          furnished to do so, subject to the following conditions:
+
+          The above copyright notice and this permission notice shall be
+          included in all copies or substantial portions of the Software.
+
+          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+          EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+          MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+          NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+          HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+          WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+          OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+          DEALINGS IN THE SOFTWARE.
+          EOF
+          cat > meta/control.tmpl <<'EOF'
+          Package: niubash
+          Version: @VER@
+          Section: utils
+          Priority: optional
+          Architecture: @ARCH@
+          Depends: libc6 (>= 2.35)
+          Maintainer: unixwin team <arookieofc@gmail.com>
+          Homepage: https://github.com/unixwin/niubash
+          Description: AI-native bash-compatible shell (niu)
+           Niubash is a native shell that runs Bash-compatible commands without
+           WSL or a virtual machine. It embeds the rubash language engine (GNU
+           bash 5.3 as its oracle) and the ruline line editor (GNU readline
+           8.x compatible).
+           .
+           On Linux, external commands come from the system's own coreutils;
+           this package installs /usr/bin/niu only and does not touch
+           /usr/bin/bash.
+          EOF
+          build_one() {
+            tarball="$1"
+            deb_arch="$3"
+            unpack="tarball-$deb_arch"
+            mkdir -p "$unpack"
+            tar -xzf "$tarball" -C "$unpack"
+            root="$(find "$unpack" -maxdepth 1 -type d -name 'niubash-*' | head -1)"
+            niu="$root/niu"
+            test -x "$niu"
+            stage="stage-$deb_arch"
+            mkdir -p "$stage/usr/bin" "$stage/usr/share/doc/niubash" "$stage/DEBIAN"
+            install -m 755 "$niu" "$stage/usr/bin/niu"
+            install -m 644 "$root/README.md" "$stage/usr/share/doc/niubash/README.md"
+            install -m 644 "$root/LICENSE" "$stage/usr/share/doc/niubash/LICENSE"
+            install -m 644 meta/copyright "$stage/usr/share/doc/niubash/copyright"
+            sed -e "s/@VER@/$version/g" -e "s/@ARCH@/$deb_arch/g" meta/control.tmpl > "$stage/DEBIAN/control"
+            dpkg-deb --root-owner-group --build "$stage" "pool/main/n/niubash/niubash_${version}_${deb_arch}.deb"
+            dpkg-deb --info "pool/main/n/niubash/niubash_${version}_${deb_arch}.deb"
+          }
+          build_one tarballs/linux-x86_64.tar.gz x86_64 amd64
+          build_one tarballs/linux-aarch64.tar.gz aarch64 arm64
+
+      # amd64 smoke runs natively; the arm64 deb is validated on install by
+      # consumers on arm hosts (same trust shape as the release tarballs).
+      - name: Install smoke (amd64)
+        env:
+          version: ${{ steps.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          sudo dpkg -i "pool/main/n/niubash/niubash_${version}_amd64.deb"
+          command -v niu | grep -qx "/usr/bin/niu"
+          [ "$(niu -c 'echo "$0"')" = "niu" ]
+          [ "$(niu -c 'printf "b\na\n" | sort | head -1')" = "a" ]
+          dpkg -s niubash | grep -q "^Version: $version$"
+          sudo dpkg -r niubash
+
+      - name: Include debs, sign, and refresh KEY.gpg
+        run: |
+          set -euo pipefail
+          if [ ! -f conf/distributions ]; then
+            mkdir -p conf
+            cat > conf/distributions <<'EOF'
+          Origin: unixwin
+          Label: niubash
+          Suite: stable
+          Codename: stable
+          Architectures: amd64 arm64
+          Components: main
+          Description: niubash — AI-native bash-compatible shell
+          SignWith: yes
+          EOF
+          fi
+          for deb in pool/main/n/niubash/*.deb; do
+            reprepro -b . -V includedeb stable "$deb"
+          done
+          reprepro -b . export stable
+          reprepro -b . list stable
+          gpg --armor --export "$GPG_KEYID" > KEY.gpg
+
+      - name: Commit and push the archive
+        run: |
+          set -euo pipefail
+          git config user.name "niubash-apt-bot"
+          git config user.email "arookieofc@gmail.com"
+          git add -A
+          git commit -m "apt: niubash ${{ steps.resolve.outputs.tag }}"
+          git push origin HEAD:main
+
+      - name: Consumer instructions
+        run: |
+          cat <<'EOF'
+          apt archive published. Consumers:
+
+            curl -fsSL https://unixwin.github.io/apt/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/niubash-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/niubash-archive-keyring.gpg] https://unixwin.github.io/apt stable main" | sudo tee /etc/apt/sources.list.d/niubash.list
+            sudo apt update && sudo apt install niubash
+          EOF

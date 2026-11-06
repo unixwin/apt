@@ -201,6 +201,7 @@ jobs:
       - name: Commit and push the archive
         run: |
           set -euo pipefail
+          rm -rf stage-* tarball-* tarballs meta
           git config user.name "niubash-apt-bot"
           git config user.email "arookieofc@gmail.com"
           git add -A

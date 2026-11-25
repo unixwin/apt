@@ -2,28 +2,28 @@ Origin: unixwin
 Label: niubash
 Suite: stable
 Codename: stable
-Date: Sun, 22 Nov 2026 19:38:15 UTC
+Date: Wed, 25 Nov 2026 21:40:55 UTC
 Architectures: amd64 arm64
 Components: main
 Description: niubash — AI-native bash-compatible shell
 MD5Sum:
- 7d5e333071f103ee8ae744219873de96 854 main/binary-amd64/Packages
- 0f4a97f55a2d95eea606862d02bc5c0a 571 main/binary-amd64/Packages.gz
+ 60f5adae43143a427ea438f57a8fc6bd 854 main/binary-amd64/Packages
+ 32f30fe257ef2c58712faff75b04c084 573 main/binary-amd64/Packages.gz
  c7df4a21d482a2fdcc7db0a754134355 140 main/binary-amd64/Release
- 8c62387c57bbd51e5d2c851d9e32decd 854 main/binary-arm64/Packages
- 404365ec99c3a075582bd8b3ebb46647 575 main/binary-arm64/Packages.gz
+ 3770d5fd83d37f206b5c0a5ab6cee465 854 main/binary-arm64/Packages
+ 6ad224ecba4c10195688c29b4f9e755f 575 main/binary-arm64/Packages.gz
  cc3c5dead3213c7c61561146748e4424 140 main/binary-arm64/Release
 SHA1:
- 1b7d2e17081bec978ee91f784c9f55b0727f234d 854 main/binary-amd64/Packages
- 0cc965b047679e853080459bbc2c6cef76162f6d 571 main/binary-amd64/Packages.gz
+ 6816ec0505b00b82ca21efbc6576f7b870cf70ce 854 main/binary-amd64/Packages
+ 93cc7f1d194eaf0c0fd88c7b4975bb0efb87aabb 573 main/binary-amd64/Packages.gz
  031a44ea88206687198f2105b5b39612ac95d747 140 main/binary-amd64/Release
- 8a6a5c1560a6d9a82ec1abab0f44bb35ee392f07 854 main/binary-arm64/Packages
- 012b67fa5e324a82f0847d55a086b3db4e0be735 575 main/binary-arm64/Packages.gz
+ a90e8edd2f78949690fcbc87d767ccd928886861 854 main/binary-arm64/Packages
+ 47e85d56a1109a3d5b568c0ed3c400d98a6b1255 575 main/binary-arm64/Packages.gz
  6065324de9110bfd1fdcc406542b08c58c91de7f 140 main/binary-arm64/Release
 SHA256:
- cdc62d7650dcc03440d33dc752cf1c048e0e93a3313d475efe871242598d3592 854 main/binary-amd64/Packages
- db56885619e0c6cc84563d2ef3bb0bec1392ed909e843e9b668b7d6993f305c1 571 main/binary-amd64/Packages.gz
+ 639b2b5a24102b093c80fd23e75a5f573d25895eb1f0790e369267b16e3f8098 854 main/binary-amd64/Packages
+ b9e478437092c16d4618f48f1ce84fa76614647ba00c0d4fa2369670c205f21d 573 main/binary-amd64/Packages.gz
  edb0ca446045693cac7a14fa0b64863583d1b5803972532fecd5a870ff327105 140 main/binary-amd64/Release
- 201c8dc15a7d8ad95b05eb06e000981010a0b8fba6dcef19c73e5a150c576b45 854 main/binary-arm64/Packages
- 6c22ecc840ae93416c297957c40f912e5fc29f94336ec56bcd401c108380eaaa 575 main/binary-arm64/Packages.gz
+ 3f486f9febdcfaaa19fbbbaa73bef9a13d8185b429d419c9f0e316a5b922494b 854 main/binary-arm64/Packages
+ e5161281d017cf6f01a158e00288257d0e7ad51f74501df23623c856497c7532 575 main/binary-arm64/Packages.gz
  92684dfd75baef62d3282eaf1236de93a3be4829999051bcc0d4af1667a0aafe 140 main/binary-arm64/Release

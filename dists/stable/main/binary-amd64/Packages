@@ -1,16 +1,16 @@
 Package: niubash
-Version: 1.5.1
+Version: 1.5.2
 Architecture: amd64
 Depends: libc6 (>= 2.35)
 Maintainer: unixwin team <arookieofc@gmail.com>
 Homepage: https://github.com/unixwin/niubash
 Priority: optional
 Section: utils
-Filename: pool/main/n/niubash/niubash_1.5.1_amd64.deb
-Size: 5397286
-SHA256: 82efc8055014bcd496ee8efd729fc69bff44b699efb3ba3b40d7f91f2ee2dcea
-SHA1: 2d778f88eb11e658ba29bf94f8044e8e2db1f806
-MD5sum: 84ae4e9c87814fac52831ae13057de53
+Filename: pool/main/n/niubash/niubash_1.5.2_amd64.deb
+Size: 6048540
+SHA256: 9d240954538e5cefbc50cb282b5ade49642924750626d3cbf32cd689543cb405
+SHA1: 692b7389b326bd3205d1e86e77732906bdfa1f9b
+MD5sum: b12109a697a1056cdbd322f8416f77a9
 Description: AI-native bash-compatible shell (niu)
  Niubash is a native shell that runs Bash-compatible commands without
  WSL or a virtual machine. It embeds the rubash language engine (GNU
